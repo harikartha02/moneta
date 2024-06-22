@@ -46,7 +46,7 @@ export default function TabLayout() {
         options={{
           title: 'Location',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'battery-full' : 'battery-full-outline'} color={color} />
+            <TabBarIcon name={focused ? 'location' : 'location-outline'} color={color} />
           ),
         }}
       />
