@@ -81,11 +81,17 @@ const LocationReminders: React.FC = () => {
     await AsyncStorage.setItem('reminders', JSON.stringify(updatedReminders));
   };
 
-  const handleSelectLocation = (selectedLocation: { name: string; latitude: number; longitude: number } | null) => {
-    if (selectedLocation) {
-      setLocation(selectedLocation);
-    }
+  const handleSelectLocation = async (coordinate: { latitude: number; longitude: number }) => {
+    const geocode = await Location.reverseGeocodeAsync(coordinate);
+    const locationName = geocode[0]?.name || 'Unknown Location';
+    const selectedLocation = {
+      name: locationName,
+      latitude: coordinate.latitude,
+      longitude: coordinate.longitude,
+    };
+    setLocation(selectedLocation);
   };
+  
 
   const handleEditPress = () => {
     // Placeholder function for edit action
@@ -108,12 +114,10 @@ const LocationReminders: React.FC = () => {
       </View>
       <Modal visible={modalVisible} animationType="slide">
         <View style={styles.modalContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Reminder Title"
-            value={title}
-            onChangeText={setTitle}
-          />
+            <ThemedText style={styles.header} type="title">
+            Choose location
+            </ThemedText>
+ 
           {currentLocation && (
             <MapView
               style={styles.map}
@@ -123,11 +127,18 @@ const LocationReminders: React.FC = () => {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
               }}
-              onPress={(e) => setLocation({ name: 'Selected Location', latitude: e.nativeEvent.coordinate.latitude, longitude: e.nativeEvent.coordinate.longitude })}
+              onPress={(e) => handleSelectLocation(e.nativeEvent.coordinate)}
             >
               {location && <Marker coordinate={{ latitude: location.latitude, longitude: location.longitude }} />}
             </MapView>
           )}
+
+            <TextInput
+            style={styles.input}
+            placeholder="Reminder Title"
+            value={title}
+            onChangeText={setTitle}
+          />
           <View style={styles.modalButtonsContainer}>
             <Button title="Cancel" onPress={() => {
               setTitle('');
@@ -145,7 +156,7 @@ const LocationReminders: React.FC = () => {
           <ThemedView style={styles.reminderItem}>
             <ThemedText style={styles.reminderTitle}>{item.title}</ThemedText>
             <ThemedText>
-              Location: {item.location.name}
+              {item.location.name}
             </ThemedText>
             <Checkbox
               checked={item.completed}
@@ -162,6 +173,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+
   },
   headerContainer: {
     flexDirection: 'row',
@@ -175,24 +187,33 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   input: {
+    marginTop: 10,
     height: 40,
-    borderColor: '#ccc',
+    borderColor: 'black',
     borderWidth: 1,
     marginBottom: 16,
     paddingHorizontal: 8,
+    borderRadius : 10,
+    fontSize: 18,
+    backgroundColor: '#C0C0C0',
+    
   },
   modalContainer: {
     flex: 1,
-    padding: 16,
+    padding: 25,
     justifyContent: 'center',
+    backgroundColor: '#28282B',
   },
   map: {
     flex: 1,
-    marginBottom: 16,
+    marginBottom: 5,
+    marginTop: 10,
+    borderRadius: 20,
   },
   modalButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 10
   },
   reminderItem: {
     padding: 16,
