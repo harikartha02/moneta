@@ -20,7 +20,7 @@ type Reminder = {
 
 const Checkbox = ({ checked, onPress }: { checked: boolean; onPress: () => void }) => (
   <TouchableOpacity onPress={onPress} style={styles.checkbox}>
-    {checked ? <MaterialIcons name="check-box" size={24} color="blue" /> : <MaterialIcons name="check-box-outline-blank" size={24} color="blue" />}
+    {checked ? <MaterialIcons name="radio-button-checked" size={24} color="gold" /> : <MaterialIcons name="radio-button-unchecked" size={24} color="gold" />}
   </TouchableOpacity>
 );
 
@@ -74,12 +74,21 @@ const LocationReminders: React.FC = () => {
   };
 
   const toggleReminderCompletion = async (id: string) => {
+    // Mark the reminder as completed
     const updatedReminders = reminders.map((reminder) =>
       reminder.id === id ? { ...reminder, completed: !reminder.completed } : reminder
     );
     setReminders(updatedReminders);
-    await AsyncStorage.setItem('reminders', JSON.stringify(updatedReminders));
+  
+    // Wait for 5 seconds before removing the reminder
+    setTimeout(async () => {
+      const finalReminders = updatedReminders.filter(reminder => reminder.id !== id);
+      setReminders(finalReminders);
+      await AsyncStorage.setItem('reminders', JSON.stringify(finalReminders));
+    }, 5000);
   };
+  
+  
 
   const handleSelectLocation = async (coordinate: { latitude: number; longitude: number }) => {
     const geocode = await Location.reverseGeocodeAsync(coordinate);
@@ -154,10 +163,12 @@ const LocationReminders: React.FC = () => {
         keyExtractor={(item) => item.id} // Assuming 'id' is a unique identifier for each reminder
         renderItem={({ item }) => (
           <ThemedView style={styles.reminderItem}>
-            <ThemedText style={styles.reminderTitle}>{item.title}</ThemedText>
-            <ThemedText>
-              {item.location.name}
-            </ThemedText>
+            <ThemedView style={styles.reminderText}>
+                <ThemedText style={styles.reminderTitle}>{item.title}</ThemedText>
+                <ThemedText style={{color: '#C0C0C0'}}>
+                {item.location.name}
+                </ThemedText>
+            </ThemedView>
             <Checkbox
               checked={item.completed}
               onPress={() => toggleReminderCompletion(item.id)}
@@ -198,6 +209,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#C0C0C0',
     
   },
+
   modalContainer: {
     flex: 1,
     padding: 25,
@@ -215,19 +227,30 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 10
   },
+
+  reminderText: {
+    flexDirection: 'column',
+    maxWidth: 250,
+
+
+  },
   reminderItem: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: '#28282B',
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    
   },
   reminderTitle: {
     fontWeight: 'bold',
+    fontSize: 20,
     flex: 1,
+    color: '#C0C0C0',
   },
   checkbox: {
     marginRight: 16,
+
   },
 });
 
