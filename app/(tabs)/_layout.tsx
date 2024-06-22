@@ -41,6 +41,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="location"
+        options={{
+          title: 'Location',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'battery-full' : 'battery-full-outline'} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
