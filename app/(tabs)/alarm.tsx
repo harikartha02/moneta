@@ -10,7 +10,7 @@ import moment from 'moment';
 type Alarm = {
   id: string;
   title: string;
-  time: Date;
+  time: Date | null; // Ensure time can be null
   repeatDays: string[];
   active: boolean;
 };
@@ -22,6 +22,7 @@ const AlarmPage: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentAlarm, setCurrentAlarm] = useState<Partial<Alarm>>({});
   const [showTimePicker, setShowTimePicker] = useState(true);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const fetchAlarms = async () => {
@@ -79,6 +80,30 @@ const AlarmPage: React.FC = () => {
     setModalVisible(true);
   };
 
+  const handleDeletePress = async (id: string) => {
+    const updatedAlarms = alarms.filter((alarm) => alarm.id !== id);
+    await saveAlarms(updatedAlarms);
+  };
+
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
+  };
+
+  const handleAlarmPress = (alarm: Alarm) => {
+    if (editMode) {
+      Alert.alert(
+        'Edit Alarm',
+        'Choose an action',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Edit', onPress: () => handleEditPress(alarm) },
+          { text: 'Delete', onPress: () => handleDeletePress(alarm.id) },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
   const handleRepeatDayPress = (day: string) => {
     if (currentAlarm.repeatDays?.includes(day)) {
       setCurrentAlarm({
@@ -96,6 +121,9 @@ const AlarmPage: React.FC = () => {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={toggleEditMode}>
+          <MaterialIcons name="edit" size={30} color={editMode ? 'red' : 'gold'} />
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <MaterialIcons name="add" size={30} color="gold" />
         </TouchableOpacity>
@@ -109,64 +137,69 @@ const AlarmPage: React.FC = () => {
         data={alarms}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <ThemedView style={styles.reminderItem}>
-            <View style={styles.reminderTextContainer}>
-              <ThemedText style={styles.reminderTime}>{moment(item.time).format('hh:mm A')}</ThemedText>
-              <ThemedText style={styles.reminderText}>{item.title}</ThemedText>
-              <ThemedText>{item.repeatDays.join(', ')}</ThemedText>
-            </View>
-            <Switch value={item.active} onValueChange={() => toggleAlarm(item.id)} />
-            <TouchableOpacity onPress={() => handleEditPress(item)} style={styles.checkbox}>
-              <MaterialIcons name="edit" size={24} color="blue" />
-            </TouchableOpacity>
-          </ThemedView>
+          <TouchableOpacity onPress={() => handleAlarmPress(item)}>
+            <ThemedView style={styles.reminderItem}>
+              <TouchableOpacity onPress={() => handleDeletePress(item.id)} style={editMode ? styles.deleteButton : { display: 'none' }}>
+                <MaterialIcons name="remove" size={24} color="red" />
+              </TouchableOpacity>
+              <View style={styles.reminderTextContainer}>
+                <ThemedText style={styles.reminderTime}>
+                  {item.time ? moment(item.time).format('hh:mm A') : ''}
+                </ThemedText>
+                <ThemedText style={styles.reminderText}>{item.title}</ThemedText>
+                <ThemedText>{item.repeatDays.join(', ')}</ThemedText>
+              </View>
+              {editMode ? (
+                <TouchableOpacity onPress={() => handleEditPress(item)}>
+                  <MaterialIcons name="arrow-forward" size={24} color="blue" />
+                </TouchableOpacity>
+              ) : (
+                <Switch value={item.active} onValueChange={() => toggleAlarm(item.id)} />
+              )}
+            </ThemedView>
+          </TouchableOpacity>
         )}
       />
 
-        <Modal visible={modalVisible} transparent={true} animationType="slide">
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              
-              <DateTimePicker
-                value={currentAlarm.time || new Date()}
-                mode="time"
-                display="default"
-                onChange={(event, selectedDate) => {
-                  setCurrentAlarm({ ...currentAlarm, time: selectedDate || currentAlarm.time });
-                }}
-                style={{ alignSelf: 'center' }} // Center the picker
-              />
-
-              <TextInput
-                style={styles.input}
-                placeholder="Alarm Title"
-                value={currentAlarm.title}
-                onChangeText={(text) => setCurrentAlarm({ ...currentAlarm, title: text })}
-              />
-
-              <View style={styles.repeatDaysContainer}>
-                {daysOfWeek.map((day) => (
-                  <TouchableOpacity
-                    key={day}
-                    style={[
-                      styles.dayButton,
-                      currentAlarm.repeatDays?.includes(day) && styles.selectedDayButton,
-                    ]}
-                    onPress={() => handleRepeatDayPress(day)}
-                  >
-                    <Text style={styles.dayButtonText}>{day}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-              <View style={styles.modalButtonsContainer}>
-                <Button title="Cancel" onPress={() => setModalVisible(false)} />
-                <Button title="Save" onPress={addOrUpdateAlarm} />
-              </View>
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <DateTimePicker
+              value={currentAlarm.time || new Date()}
+              mode="time"
+              display="default"
+              onChange={(event, selectedDate) => {
+                setCurrentAlarm({ ...currentAlarm, time: selectedDate || currentAlarm.time });
+              }}
+              style={{ alignSelf: 'center' }}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Alarm Title"
+              value={currentAlarm.title}
+              onChangeText={(text) => setCurrentAlarm({ ...currentAlarm, title: text })}
+            />
+            <View style={styles.repeatDaysContainer}>
+              {daysOfWeek.map((day) => (
+                <TouchableOpacity
+                  key={day}
+                  style={[
+                    styles.dayButton,
+                    currentAlarm.repeatDays?.includes(day) && styles.selectedDayButton,
+                  ]}
+                  onPress={() => handleRepeatDayPress(day)}
+                >
+                  <Text style={styles.dayButtonText}>{day}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={styles.modalButtonsContainer}>
+              <Button title="Cancel" onPress={() => setModalVisible(false)} />
+              <Button title="Save" onPress={addOrUpdateAlarm} />
             </View>
           </View>
-        </Modal>
-
-
+        </View>
+      </Modal>
     </ThemedView>
   );
 };
@@ -178,7 +211,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
     marginTop: 40,
@@ -204,8 +237,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-
-
   input: {
     width: '100%',
     height: 40,
@@ -217,7 +248,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     color: 'black',
     backgroundColor: '#C0C0C0',
-    fontSize: 18
+    fontSize: 18,
   },
   repeatDaysContainer: {
     flexDirection: 'row',
@@ -267,8 +298,8 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     paddingTop: 5,
   },
-  checkbox: {
-    marginLeft: 16,
+  deleteButton: {
+    marginRight: 16,
   },
   header: {
     fontSize: 24,
