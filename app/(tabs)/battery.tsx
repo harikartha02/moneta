@@ -13,10 +13,10 @@ type BatteryReminder = {
 };
 
 const Checkbox = ({ checked, onPress }: { checked: boolean; onPress: () => void }) => (
-  <TouchableOpacity onPress={onPress} style={styles.checkbox}>
-    {checked ? <MaterialIcons name="check-box" size={24} color="blue" /> : <MaterialIcons name="check-box-outline-blank" size={24} color="blue" />}
-  </TouchableOpacity>
-);
+    <TouchableOpacity onPress={onPress} style={styles.checkbox}>
+      {checked ? <MaterialIcons name="radio-button-checked" size={24} color="gold" /> : <MaterialIcons name="radio-button-unchecked" size={24} color="gold" />}
+    </TouchableOpacity>
+  );
 
 const BatteryReminders: React.FC = () => {
   const [reminders, setReminders] = useState<BatteryReminder[]>([]);
