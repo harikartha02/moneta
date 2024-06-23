@@ -221,7 +221,6 @@ headerModal: {
     borderRadius : 10,
     fontSize: 18,
     backgroundColor: '#C0C0C0',
-    
   },
 
   modalContainer: {
@@ -245,8 +244,6 @@ headerModal: {
   reminderText: {
     flexDirection: 'column',
     maxWidth: 250,
-
-
   },
   reminderItem: {
     padding: 16,
