@@ -123,44 +123,50 @@ const AlarmPage: React.FC = () => {
         )}
       />
 
-      <Modal visible={modalVisible} transparent={true} animationType="slide">
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <TextInput
-              style={styles.input}
-              placeholder="Alarm Title"
-              value={currentAlarm.title}
-              onChangeText={(text) => setCurrentAlarm({ ...currentAlarm, title: text })}
-            />
-            <DateTimePicker
-              value={currentAlarm.time || new Date()}
-              mode="time"
-              display="default"
-              onChange={(event, selectedDate) => {
-                setCurrentAlarm({ ...currentAlarm, time: selectedDate || currentAlarm.time });
-              }}
-            />
-            <View style={styles.repeatDaysContainer}>
-              {daysOfWeek.map((day) => (
-                <TouchableOpacity
-                  key={day}
-                  style={[
-                    styles.dayButton,
-                    currentAlarm.repeatDays?.includes(day) && styles.selectedDayButton,
-                  ]}
-                  onPress={() => handleRepeatDayPress(day)}
-                >
-                  <Text style={styles.dayButtonText}>{day}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            <View style={styles.modalButtonsContainer}>
-              <Button title="Cancel" onPress={() => setModalVisible(false)} />
-              <Button title="Save" onPress={addOrUpdateAlarm} />
+        <Modal visible={modalVisible} transparent={true} animationType="slide">
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              
+              <DateTimePicker
+                value={currentAlarm.time || new Date()}
+                mode="time"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  setCurrentAlarm({ ...currentAlarm, time: selectedDate || currentAlarm.time });
+                }}
+                style={{ alignSelf: 'center' }} // Center the picker
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Alarm Title"
+                value={currentAlarm.title}
+                onChangeText={(text) => setCurrentAlarm({ ...currentAlarm, title: text })}
+              />
+
+              <View style={styles.repeatDaysContainer}>
+                {daysOfWeek.map((day) => (
+                  <TouchableOpacity
+                    key={day}
+                    style={[
+                      styles.dayButton,
+                      currentAlarm.repeatDays?.includes(day) && styles.selectedDayButton,
+                    ]}
+                    onPress={() => handleRepeatDayPress(day)}
+                  >
+                    <Text style={styles.dayButtonText}>{day}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <View style={styles.modalButtonsContainer}>
+                <Button title="Cancel" onPress={() => setModalVisible(false)} />
+                <Button title="Save" onPress={addOrUpdateAlarm} />
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+
+
     </ThemedView>
   );
 };
@@ -184,7 +190,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.8)', // Semi-transparent background
   },
   modalView: {
-    width: '80%', // Width of the modal
+    width: '90%', // Width of the modal
     backgroundColor: '#28282B',
     borderRadius: 20,
     padding: 20,
@@ -198,6 +204,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+
+
   input: {
     width: '100%',
     height: 40,
@@ -205,24 +213,30 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 8,
     borderRadius: 10,
+    marginTop: 15,
     marginBottom: 16,
-    color: 'white',
+    color: 'black',
+    backgroundColor: '#C0C0C0',
+    fontSize: 18
   },
   repeatDaysContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 16,
+    margin: 10,
   },
   dayButton: {
     padding: 8,
-    borderRadius: 4,
+    borderRadius: 7,
     borderWidth: 1,
     borderColor: 'gray',
-    backgroundColor: '#1E1E1E', // Unselected day button background color
+    backgroundColor: '#1E1E1E',
+    margin: 2,
   },
   selectedDayButton: {
-    backgroundColor: 'blue',
-    borderColor: 'blue',
+    backgroundColor: '#36454F',
+    borderColor: '#C0C0C0',
+    color: 'black',
   },
   dayButtonText: {
     color: 'white',
