@@ -125,7 +125,7 @@ const LocationReminders: React.FC = () => {
 
       <Modal visible={modalVisible} animationType="slide">
         <View style={styles.modalContainer}>
-            <ThemedText style={styles.header} type="title">
+            <ThemedText style={styles.headerModal}>
             Choose location
             </ThemedText>
  
@@ -202,6 +202,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingBottom: 10
   },
+
+headerModal: {
+    marginTop: 40,
+    fontSize: 24,
+    fontWeight: 'bold',
+    paddingHorizontal: 8,
+    paddingBottom: 5
+},
+
   input: {
     marginTop: 10,
     height: 40,
