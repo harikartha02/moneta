@@ -51,6 +51,15 @@ const BatteryReminders: React.FC = () => {
     setModalVisible(false); // Close the modal after adding a reminder
   };
 
+
+  const toggleReminderActivation = async (id: string) => {
+    const updatedReminders = reminders.map((reminder) =>
+      reminder.id === id ? { ...reminder, active: !reminder.active } : reminder
+    );
+    setReminders(updatedReminders);
+    await AsyncStorage.setItem('batteryReminders', JSON.stringify(updatedReminders));
+  };
+  
   const toggleReminderCompletion = async (id: string) => {
     const updatedReminders = reminders.map((reminder) =>
       reminder.id === id ? { ...reminder, completed: !reminder.completed } : reminder
@@ -88,7 +97,8 @@ const BatteryReminders: React.FC = () => {
             <View style={{ flex: 1 }}>
               <ThemedText style={styles.reminderText}>{item.percentage}%</ThemedText>
             </View>
-            <Checkbox checked={item.active} onPress={() => toggleReminderCompletion(item.id)} />
+            <Checkbox checked={item.active} onPress={() => toggleReminderActivation(item.id)} />
+
           </ThemedView>
         )}
       />
@@ -158,13 +168,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent background
+    backgroundColor: 'rgba(0, 0, 0, 0.8)', // semi-transparent background
   },
   modalContainer: {
     width: 300,
     padding: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
+    backgroundColor: '#28282B',
+    borderRadius: 20,
     alignItems: 'center',
   },
   input: {
@@ -172,9 +182,11 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 1,
     paddingHorizontal: 8,
-    borderRadius: 10,
+    borderRadius: 11,
     marginBottom: 16,
     width: '100%',
+    backgroundColor: '#C0C0C0',
+    fontSize: 18,
   },
   modalButtonsContainer: {
     flexDirection: 'row',
