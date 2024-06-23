@@ -5,7 +5,7 @@ import * as Location from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { MaterialIcons } from '@expo/vector-icons'; // Import icon library
+import { MaterialIcons } from '@expo/vector-icons';
 
 type Reminder = {
   id: string;
@@ -110,17 +110,19 @@ const LocationReminders: React.FC = () => {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={handleEditPress} style={{ marginTop: 20 }}>
+        <TouchableOpacity onPress={handleEditPress}>
         <MaterialIcons name="edit" size={30} color="gold" />
         </TouchableOpacity>
-        <ThemedText style={styles.header} type="title">
-          Location-Based Reminders
-        </ThemedText>
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={{ marginTop: 20 }}>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
           <MaterialIcons name="add" size={30} color="gold" />
         </TouchableOpacity>
 
       </View>
+
+      <ThemedText style={styles.header} type="title">
+          Location-Based Reminders
+        </ThemedText>
+
       <Modal visible={modalVisible} animationType="slide">
         <View style={styles.modalContainer}>
             <ThemedText style={styles.header} type="title">
@@ -191,11 +193,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
+    marginTop:40,
+
   },
   header: {
-    marginTop:80,
     fontSize: 24,
     fontWeight: 'bold',
+    paddingHorizontal: 8,
+    paddingBottom: 10
   },
   input: {
     marginTop: 10,
