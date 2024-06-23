@@ -138,15 +138,18 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   reminderItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: '#28282B',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    
   },
   reminderText: {
-    fontSize: 18,
-    marginRight: 16,
+    fontWeight: 'bold',
+    fontSize: 20,
+    flex: 1,
+    color: '#C0C0C0',
   },
   checkbox: {
     marginRight: 16,
