@@ -76,7 +76,10 @@ const AlarmPage: React.FC = () => {
   };
 
   const handleEditPress = (alarm: Alarm) => {
-    setCurrentAlarm(alarm);
+    setCurrentAlarm({
+      ...alarm,
+      time: alarm.time ? new Date(alarm.time) : new Date(),
+    });
     setModalVisible(true);
   };
 
@@ -137,27 +140,25 @@ const AlarmPage: React.FC = () => {
         data={alarms}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleAlarmPress(item)}>
             <ThemedView style={styles.reminderItem}>
               <TouchableOpacity onPress={() => handleDeletePress(item.id)} style={editMode ? styles.deleteButton : { display: 'none' }}>
-                <MaterialIcons name="remove" size={24} color="red" />
+                <MaterialIcons name="remove-circle" size={24} color="red" />
               </TouchableOpacity>
               <View style={styles.reminderTextContainer}>
                 <ThemedText style={styles.reminderTime}>
                   {item.time ? moment(item.time).format('hh:mm A') : ''}
                 </ThemedText>
                 <ThemedText style={styles.reminderText}>{item.title}</ThemedText>
-                <ThemedText>{item.repeatDays.join(', ')}</ThemedText>
+                <ThemedText>{item.repeatDays.join(' | ')}</ThemedText>
               </View>
               {editMode ? (
                 <TouchableOpacity onPress={() => handleEditPress(item)}>
-                  <MaterialIcons name="arrow-forward" size={24} color="blue" />
+                  <MaterialIcons name="arrow-forward-ios" size={24} color="gold" />
                 </TouchableOpacity>
               ) : (
                 <Switch value={item.active} onValueChange={() => toggleAlarm(item.id)} />
               )}
             </ThemedView>
-          </TouchableOpacity>
         )}
       />
 
@@ -165,7 +166,7 @@ const AlarmPage: React.FC = () => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <DateTimePicker
-              value={currentAlarm.time || new Date()}
+              value={currentAlarm.time ? new Date(currentAlarm.time) : new Date()}
               mode="time"
               display="default"
               onChange={(event, selectedDate) => {
@@ -203,6 +204,7 @@ const AlarmPage: React.FC = () => {
     </ThemedView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
