@@ -149,7 +149,7 @@ const AlarmPage: React.FC = () => {
                   {item.time ? moment(item.time).format('hh:mm A') : ''}
                 </ThemedText>
                 <ThemedText style={styles.reminderText}>{item.title}</ThemedText>
-                <ThemedText>{item.repeatDays.join(' | ')}</ThemedText>
+                <ThemedText style={{color: '#C0C0C0'}}>{item.repeatDays.join(' | ')}</ThemedText>
               </View>
               {editMode ? (
                 <TouchableOpacity onPress={() => handleEditPress(item)}>
